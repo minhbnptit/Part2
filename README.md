@@ -1,6 +1,6 @@
 # Phần 2: Giải mã Mã Vòng Tuyến Tính bằng thuật toán Meggitt (Chia dịch vòng)
 
-**Thực hiện bởi:** Bùi Nhật Minh (B24DCAT184) & Nhóm bài tập môn học.
+**Thực hiện bởi:** Bùi Nhật Minh (B24DCAT184), Đỗ Hồng Quang (B24DCAT231), Bùi Ninh Khôi (B24DCAT148).
 
 ## 1. Giới thiệu chung
 Chương trình này thực hiện mô phỏng hệ thống giải mã cho Mã vòng tuyến tính $C(l, k)$ có khoảng cách thiết kế $d_0$ trên trường Galois $GF(2)$. 
@@ -29,5 +29,7 @@ Mã nguồn được thiết kế theo tư duy Hướng đối tượng (OOP) tr
 Bạn cần một trình biên dịch C++ (chuẩn C++11 trở lên).
 Sử dụng lệnh sau trong terminal để biên dịch:
 
-```bash
-g++ -O2 main.cpp -o meggitt_decoder
+Cài đặt về máy: git clone https://github.com/minhbnptit/Part2.git
+
+Chạy lệnh:  g++ -O2 main.cpp -o meggitt_decoder
+

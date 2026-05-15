@@ -11,7 +11,7 @@ Thuật toán sử dụng là **Meggitt Decoder** (Giải mã chia dịch vòng)
 - Xây dựng hoàn chỉnh từ đầu các lớp đối tượng toán học:
   - `GF2Polynomial`: Xử lý đa thức nhị phân (cộng XOR, nhân, chia lấy dư Modulo-2).
   - `BinaryVector`: Xử lý véc-tơ nhị phân (trọng số Hamming, dịch vòng trái/phải).
-- Tích hợp **Verbose Mode** (Chế độ chi tiết): In ra từng bước dịch vòng, tính hội chứng và sửa lỗi để phục vụ việc trình bày lời giải tự luận (Bonus).
+- Tích hợp **Verbose Mode** (Chế độ chi tiết): In ra từng bước dịch vòng, tính hội chứng và sửa lỗi để phục vụ việc trình bày lời giải tự luận.
 
 ---
 

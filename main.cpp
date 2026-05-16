@@ -196,62 +196,111 @@ public:
     // -------------------------------------------------------
     BinaryVector decode(const BinaryVector& r, bool verbose = false) const {
 
+    GF2Polynomial s0 = syndrome(r);
+
+    if (verbose) {
+        cout << "BAI LAM GIAI MA MA VONG TUYEN TINH\n";
+        cout << "-----------------------------------\n";
+        cout << "Xet ma vong tuyen tinh C(" << l << ", " << k << ", " << d0 << ")\n";
+        cout << "Do dai tu ma: l = " << l << "\n";
+        cout << "So bit thong tin: k = " << k << "\n";
+        cout << "Khoang cach toi thieu: d0 = " << d0 << "\n";
+        cout << "Da thuc sinh: g(x) = " << g.toPolyString() << "\n";
+        cout << "Kha nang sua loi:\n";
+        cout << "t = floor((d0 - 1) / 2) = floor(("
+             << d0 << " - 1) / 2) = " << t << "\n\n";
+
+        cout << "Vecto nhan duoc:\n";
+        cout << "r = " << r.toString() << "\n\n";
+
+        cout << "Tinh hoi chung ban dau:\n";
+        cout << "S(x) = r(x) mod g(x) = "
+             << s0.toPolyString() << "\n\n";
+    }
+
+    if (s0.isZero()) {
         if (verbose) {
-            cout << "===========================================\n";
-            cout << "Ma vong C(" << l << ", " << k << ", " << d0 << ")\n";
-            cout << "g(x) = " << g.toPolyString() << "\n";
-            cout << "t    = " << t << "\n";
-            cout << "r(x) = " << r.toString() << "\n";
-            cout << "===========================================\n\n";
+            cout << "Vi S(x) = 0 nen vecto nhan duoc khong co loi.\n";
+            cout << "Tu ma sau giai ma la:\n";
+        }
+        return r;
+    }
+
+    BinaryVector working = r;
+
+    if (verbose) {
+        cout << "Vi S(x) khac 0 nen vecto nhan duoc co loi.\n";
+        cout << "Ta tien hanh thuat toan dich vong Meggitt.\n\n";
+    }
+
+    for (int i = 0; i < l; i++) {
+        GF2Polynomial s = syndrome(working);
+        int w = s.weight();
+
+        if (verbose) {
+            cout << "Lan xet thu " << i + 1 << ":\n";
+            cout << "Vecto dang xet: r" << i << " = "
+                 << working.toString() << "\n";
+            cout << "Hoi chung:\n";
+            cout << "S" << i << "(x) = r" << i
+                 << "(x) mod g(x) = " << s.toPolyString() << "\n";
+            cout << "Trong so Hamming cua hoi chung:\n";
+            cout << "w(S" << i << ") = " << w << "\n";
         }
 
-        // Bu?c 0: kiểm tra hội chứng ban đầu
-        GF2Polynomial s0 = syndrome(r);
-        if (s0.isZero()) {
-            if (verbose) cout << "S(x) = 0  =>  Khong co loi.\n\n";
-            return r;
-        }
-
-        BinaryVector working = r;
-
-        for (int i = 0; i < l; i++) {
-            GF2Polynomial s = syndrome(working);
-            int           w = s.weight();
+        if (w <= t) {
+            BinaryVector e(s, l);
+            BinaryVector fixed = working ^ e;
 
             if (verbose) {
-                cout << "Buoc " << i << ":  r = " << working.toString()
-                     << "   S(x) = " << s.toPolyString()
-                     << "   w = " << w << "\n";
+                cout << "Do w(S" << i << ") = " << w
+                     << " <= t = " << t << ", nen co the sua loi.\n";
+                cout << "Vecto loi o dang hien tai la:\n";
+                cout << "e" << i << " = " << e.toString() << "\n";
+
+                cout << "Sua loi bang phep XOR:\n";
+                cout << "c" << i << " = r" << i << " XOR e" << i << "\n";
+                cout << "c" << i << " = " << working.toString()
+                     << " XOR " << e.toString()
+                     << " = " << fixed.toString() << "\n";
             }
 
-            if (w <= t) {
-                // Vecto l?i e: d?t h?i ch?ng vào các v? trí th?p
-                BinaryVector e(s, l);
+            for (int j = 0; j < i; j++)
+                fixed.rotateLeft();
 
-                // Sửa lỗi
-                BinaryVector fixed = working ^ e;
-
-                // Dịch ngược lại i lần để về vị trí gốc
-                for (int j = 0; j < i; j++)
-                    fixed.rotateLeft();
-
-                if (verbose) {
-                    cout << "\n=> Phat hien loi tai buoc " << i << "\n";
-                    cout << "   e(x) = " << e.toString() << "\n";
-                    cout << "   c(x) = " << fixed.toString() << "\n\n";
+            if (verbose) {
+                if (i > 0) {
+                    cout << "\nDo truoc do da dich vong phai "
+                         << i << " lan, ta dich vong trai "
+                         << i << " lan de dua ve vi tri ban dau.\n";
                 }
 
-                return fixed;
+                cout << "\nKet luan:\n";
+                cout << "Tu ma sau khi giai ma la:\n";
             }
 
-            working.rotateRight();
+            return fixed;
         }
 
-        if (verbose)
-            cout << "Khong the sua loi (vuot qua kha nang t=" << t << ").\n\n";
+        if (verbose) {
+            cout << "Do w(S" << i << ") = " << w
+                 << " > t = " << t
+                 << ", chua the sua loi.\n";
+            cout << "Ta dich vong phai vecto dang xet de tiep tuc.\n\n";
+        }
 
-        return r; // Trả nguyên gốc nếu không sửa được
+        working.rotateRight();
     }
+
+    if (verbose) {
+        cout << "Sau khi xet het " << l << " lan dich vong, "
+             << "khong tim duoc hoi chung co trong so <= t.\n";
+        cout << "Vay loi vuot qua kha nang sua cua ma.\n";
+        cout << "Tra lai vecto ban dau:\n";
+    }
+
+    return r;
+}
 };
 
 // ============================================================
